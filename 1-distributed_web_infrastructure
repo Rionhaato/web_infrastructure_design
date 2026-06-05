@@ -1,0 +1,73 @@
+Task 1: Distributed web infrastructure
+
+Screenshot link:
+TODO: Paste the hosted screenshot URL for the Task 1 diagram here.
+
+Infrastructure:
+
+- Domain name: foobar.com
+- DNS record: www.foobar.com points to the load balancer IP address.
+- Load balancer: HAProxy
+- Server 1:
+  - Nginx web server
+  - Application server
+  - Application files / codebase
+  - Primary MySQL database
+- Server 2:
+  - Nginx web server
+  - Application server
+  - Application files / codebase
+  - Replica MySQL database
+
+Request flow:
+
+1. A user opens a browser and enters www.foobar.com.
+2. DNS resolves www.foobar.com to the load balancer IP address.
+3. The browser sends an HTTP request to the load balancer.
+4. HAProxy distributes the request to one of the two backend servers.
+5. Nginx on the selected server receives the request.
+6. Nginx serves static content or forwards dynamic requests to the application server.
+7. The application server runs the codebase.
+8. The application server writes data to the Primary MySQL database.
+9. The Primary database replicates data to the Replica database.
+10. The response is returned to the user's browser.
+
+Additional elements and why they are added:
+
+- HAProxy load balancer: distributes incoming traffic between multiple servers so one server does not handle all requests.
+- Second server: adds more capacity and improves availability if one backend server fails.
+- Second Nginx web server: allows web traffic to be handled by more than one server.
+- Second application server: allows application logic to run on more than one server.
+- Second codebase copy: each application server needs the application files to run the website.
+- Replica MySQL database: copies data from the Primary database and can be used for read queries or backup.
+
+Load balancer algorithm:
+
+The load balancer can be configured with the Round Robin algorithm. Round Robin sends requests to each backend server one after another in order. For example, the first request goes to Server 1, the second request goes to Server 2, then the next request goes back to Server 1.
+
+Active-Active or Active-Passive:
+
+This infrastructure uses an Active-Active setup because both backend servers receive traffic and serve users at the same time.
+
+In an Active-Active setup, all available servers are working and receiving traffic.
+
+In an Active-Passive setup, one server handles traffic while another server waits as a backup. The passive server is used only if the active server fails.
+
+Primary-Replica database cluster:
+
+In a Primary-Replica MySQL cluster, the Primary database receives write operations such as INSERT, UPDATE, and DELETE. The Replica database copies data from the Primary database through replication.
+
+The application sends write requests to the Primary node. The application can send read requests to the Replica node to reduce load on the Primary database.
+
+Difference between Primary and Replica:
+
+- Primary node: handles write operations and is the source of truth for database changes.
+- Replica node: copies data from the Primary node and can handle read operations, but it should not normally receive writes from the application.
+
+Issues with this infrastructure:
+
+- SPOF: The load balancer is a single point of failure. If it fails, users cannot reach the backend servers.
+- SPOF: The Primary database is a single point of failure for writes. If it fails, the application cannot write new data.
+- Security issue: There is no firewall, so network access is not filtered or restricted.
+- Security issue: There is no HTTPS, so traffic between users and the website is not encrypted.
+- No monitoring: There is no monitoring system to track uptime, server health, traffic, errors, or database performance.
