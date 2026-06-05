@@ -1,0 +1,44 @@
+Task 0: Simple web stack
+
+Screenshot link:
+TODO: Paste the hosted screenshot URL for the Task 0 diagram here.
+
+Infrastructure:
+
+- Domain name: foobar.com
+- DNS record: www.foobar.com points to 8.8.8.8
+- Server IP: 8.8.8.8
+- Server contents:
+  - Nginx web server
+  - Application server
+  - Application files / codebase
+  - MySQL database
+
+Request flow:
+
+1. A user opens a browser and enters www.foobar.com.
+2. The browser asks DNS to resolve www.foobar.com.
+3. DNS returns the server IP address: 8.8.8.8.
+4. The user's browser sends an HTTP request to the server at 8.8.8.8.
+5. Nginx receives the request.
+6. If the request is for static content, Nginx can return it directly.
+7. If the request needs dynamic content, Nginx forwards it to the application server.
+8. The application server runs the application codebase.
+9. If data is needed, the application server queries the MySQL database.
+10. The response is sent back through Nginx to the user's browser.
+
+Specific explanations:
+
+- A server is a physical or virtual computer that provides services to clients.
+- The domain name foobar.com gives users a human-readable name instead of requiring them to remember an IP address.
+- The www record in www.foobar.com is an A record because it maps a hostname to an IPv4 address.
+- The web server, Nginx, receives HTTP requests from users and serves static files or forwards dynamic requests to the application server.
+- The application server runs the website's application logic and uses the codebase to generate dynamic responses.
+- The database, MySQL, stores persistent data such as users, posts, settings, and other application information.
+- The server communicates with the user's computer over the network using TCP/IP and HTTP.
+
+Issues with this infrastructure:
+
+- SPOF: The single server is a single point of failure. If it fails, the whole website goes down.
+- Downtime during maintenance: Deploying new code or restarting Nginx, the application server, or MySQL can make the website unavailable.
+- Cannot scale well: All traffic goes to one server, so too much incoming traffic can overload CPU, memory, disk, or network capacity.
