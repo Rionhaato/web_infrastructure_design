@@ -1,0 +1,44 @@
+flowchart LR
+    user[User Browser]
+    dns[DNS]
+    fw1[Firewall]
+    lb[HAProxy Load Balancer<br/>SSL termination]
+    cert[SSL Certificate]
+
+    subgraph webapp[Web/Application Layer]
+        fw2[Firewall]
+        server1[Server 1<br/>Nginx + App]
+        mon1[Monitoring Client]
+        fw3[Firewall]
+        server2[Server 2<br/>Nginx + App]
+        mon2[Monitoring Client]
+    end
+
+    subgraph data[Database Layer]
+        fw4[Firewall]
+        primary[(Primary MySQL)]
+        mon3[Monitoring Client]
+        fw5[Firewall]
+        replica[(Replica MySQL)]
+        mon4[Monitoring Client]
+    end
+
+    monitoring[Monitoring Service]
+
+    user --> dns
+    dns --> user
+    user -->|HTTPS| fw1
+    fw1 --> lb
+    cert --> lb
+    lb --> fw2
+    lb --> fw3
+    fw2 --> server1
+    fw3 --> server2
+    server1 --> fw4
+    server2 --> fw4
+    fw4 --> primary
+    primary -->|Replication| replica
+    mon1 --> monitoring
+    mon2 --> monitoring
+    mon3 --> monitoring
+    mon4 --> monitoring

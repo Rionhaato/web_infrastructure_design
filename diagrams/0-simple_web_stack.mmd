@@ -1,0 +1,20 @@
+flowchart LR
+    user[User Browser]
+    dns[DNS<br/>www.foobar.com A record]
+    server[Server<br/>8.8.8.8]
+    nginx[Nginx<br/>Web Server]
+    app[Application Server]
+    code[Codebase]
+    db[(MySQL Database)]
+
+    user -->|1. Resolve domain| dns
+    dns -->|2. Returns 8.8.8.8| user
+    user -->|3. HTTP request| server
+    server --> nginx
+    nginx -->|Static files| user
+    nginx -->|Dynamic request| app
+    app --> code
+    app -->|Query data| db
+    db -->|Return data| app
+    app --> nginx
+    nginx --> user

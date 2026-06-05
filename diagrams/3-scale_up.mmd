@@ -1,0 +1,51 @@
+flowchart LR
+    user[User Browser]
+    dns[DNS]
+    fw[Firewall]
+
+    subgraph lbcluster[Load Balancer Cluster]
+        lb1[HAProxy LB 1]
+        lb2[HAProxy LB 2]
+    end
+
+    subgraph web[Web Server Layer]
+        web1[Nginx Web Server 1]
+        web2[Nginx Web Server 2]
+    end
+
+    subgraph app[Application Server Layer]
+        app1[App Server 1]
+        app2[App Server 2]
+    end
+
+    subgraph db[Database Layer]
+        primary[(Primary MySQL)]
+        replica[(Replica MySQL)]
+    end
+
+    mon[Monitoring Service]
+
+    user --> dns
+    dns --> user
+    user -->|HTTPS| fw
+    fw --> lb1
+    fw --> lb2
+    lb1 --> web1
+    lb1 --> web2
+    lb2 --> web1
+    lb2 --> web2
+    web1 --> app1
+    web1 --> app2
+    web2 --> app1
+    web2 --> app2
+    app1 --> primary
+    app2 --> primary
+    app1 --> replica
+    app2 --> replica
+    primary --> replica
+    web1 --> mon
+    web2 --> mon
+    app1 --> mon
+    app2 --> mon
+    primary --> mon
+    replica --> mon
