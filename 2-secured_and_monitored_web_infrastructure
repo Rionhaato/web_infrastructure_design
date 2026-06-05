@@ -1,0 +1,76 @@
+Task 2: Secured and monitored web infrastructure
+
+Screenshot link:
+TODO: Paste the hosted screenshot URL for the Task 2 diagram here.
+
+Infrastructure:
+
+- Domain name: foobar.com
+- DNS record: www.foobar.com points to the load balancer IP address.
+- Load balancer: HAProxy
+- SSL certificate installed for www.foobar.com
+- 3 firewalls
+- 3 monitoring clients
+- Server 1:
+  - Nginx web server
+  - Application server
+  - Application files / codebase
+  - MySQL Primary database
+  - Monitoring client
+- Server 2:
+  - Nginx web server
+  - Application server
+  - Application files / codebase
+  - MySQL Replica database
+  - Monitoring client
+- Server 3:
+  - Nginx web server
+  - Application server
+  - Application files / codebase
+  - MySQL Replica database
+  - Monitoring client
+
+Request flow:
+
+1. A user opens a browser and enters https://www.foobar.com.
+2. DNS resolves www.foobar.com to the load balancer IP address.
+3. The user's browser sends an HTTPS request.
+4. The request passes through a firewall.
+5. HAProxy receives the HTTPS request and uses the SSL certificate.
+6. HAProxy distributes the request to one of the backend servers.
+7. The selected server's Nginx web server receives the request.
+8. Nginx serves static content or forwards dynamic requests to the application server.
+9. The application server runs the codebase and communicates with MySQL when data is needed.
+10. Monitoring clients collect metrics and send them to the monitoring service.
+
+Additional elements and why they are added:
+
+- 3 firewalls: filter network traffic and allow only approved traffic between users, the load balancer, servers, and databases.
+- SSL certificate: allows www.foobar.com to serve traffic over HTTPS.
+- 3 monitoring clients: collect metrics and logs from each server so the infrastructure can be observed.
+
+What firewalls are for:
+
+Firewalls protect the infrastructure by controlling which network traffic is allowed or blocked. They can restrict access by IP address, port, protocol, or direction. For example, a firewall can allow HTTPS traffic on port 443 while blocking unwanted database access from the public Internet.
+
+Why traffic is served over HTTPS:
+
+HTTPS encrypts traffic between the user's browser and the website. This protects sensitive data, helps prevent traffic interception, and lets users verify that they are communicating with the correct website.
+
+What monitoring is used for:
+
+Monitoring is used to track the health, performance, and availability of the infrastructure. It helps detect outages, high CPU usage, memory problems, disk issues, slow responses, high error rates, and abnormal traffic.
+
+How the monitoring tool collects data:
+
+A monitoring client runs on each server. The client collects metrics, logs, and service information, then sends that data to a monitoring service such as Sumo Logic, Datadog, New Relic, or Prometheus.
+
+Monitoring web server QPS:
+
+To monitor web server QPS, enable request metrics from Nginx or the load balancer. The monitoring client can collect the number of HTTP requests over time, then the monitoring service can calculate queries per second from that data.
+
+Issues with this infrastructure:
+
+- SSL termination at the load balancer can be an issue because traffic may be decrypted at the load balancer and then sent unencrypted to backend servers. If the internal network is compromised, that traffic could be read.
+- Having only one MySQL server capable of accepting writes is an issue because the Primary database is a bottleneck and a single point of failure for write operations.
+- Having servers with all the same components can be a problem because the web server, application server, and database compete for the same CPU, memory, disk, and network resources. It also makes scaling harder because each layer may need to scale differently.
